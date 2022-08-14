@@ -44,4 +44,9 @@ public class UserService {
         return appUserRepository.findById(userId)
                 .orElse(null);
     }
+
+    public AppUser get(String username) {
+        return appUserRepository.findByUsername(username)
+                .orElse(null);
+    }
 }

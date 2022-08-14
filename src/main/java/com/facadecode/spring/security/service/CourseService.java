@@ -1,7 +1,9 @@
 package com.facadecode.spring.security.service;
 
+import com.facadecode.spring.security.domain.AppUser;
 import com.facadecode.spring.security.domain.Course;
 import com.facadecode.spring.security.repo.CourseRepository;
+import com.facadecode.spring.security.security.AuthenticationFacade;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,16 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepo;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AuthenticationFacade authenticationFacade;
+
     public Course create(Course newCourse) {
+        String username = authenticationFacade.getAuthentication().getName();
+        AppUser currentUser = userService.get(username);
+        newCourse.setCreatedBy(currentUser);
         return courseRepo.save(newCourse);
     }
 
