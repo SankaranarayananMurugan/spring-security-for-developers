@@ -20,7 +20,7 @@ public class DbUserDetailsService {
                 .stream()
                 .map(appUser -> User.builder()
                         .username(appUser.getUsername())
-                        .password(String.format("{noop}%s", appUser.getPassword()))
+                        .password(appUser.getPassword())
                         .authorities(Collections.EMPTY_SET)
                         .build()
                 )

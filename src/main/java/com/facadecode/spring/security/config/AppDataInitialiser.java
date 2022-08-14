@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -28,6 +29,9 @@ public class AppDataInitialiser implements ApplicationRunner {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -62,7 +66,7 @@ public class AppDataInitialiser implements ApplicationRunner {
     private AppUser[] createInstructors(AppRole instructorRole) {
         AppUser gruUser = AppUser.builder()
                 .username("Gru")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .email("gru@email.com")
                 .roles(Collections.singleton(instructorRole))
                 .build();
@@ -70,7 +74,7 @@ public class AppDataInitialiser implements ApplicationRunner {
 
         AppUser lucyUser = AppUser.builder()
                 .username("Lucy")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .email("lucy@email.com")
                 .roles(Collections.singleton(instructorRole))
                 .build();
@@ -134,7 +138,7 @@ public class AppDataInitialiser implements ApplicationRunner {
 
         AppUser bobUser = AppUser.builder()
                 .username("Bob")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .email("bob@email.com")
                 .roles(Collections.singleton(studentRole))
                 .enrolledCourses(
@@ -146,7 +150,7 @@ public class AppDataInitialiser implements ApplicationRunner {
 
         AppUser kevinUser = AppUser.builder()
                 .username("Kevin")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .email("kevin@email.com")
                 .roles(Collections.singleton(studentRole))
                 .enrolledCourses(
@@ -158,7 +162,7 @@ public class AppDataInitialiser implements ApplicationRunner {
 
         AppUser stuartUser = AppUser.builder()
                 .username("Stuart")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .email("stuart@email.com")
                 .roles(Collections.singleton(studentRole))
                 .enrolledCourses(
@@ -174,7 +178,7 @@ public class AppDataInitialiser implements ApplicationRunner {
     private AppUser createAdmin(AppRole adminRole) {
         AppUser adminUser = AppUser.builder()
                 .username("Admin")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .email("admin@email.com")
                 .roles(Collections.singleton(adminRole))
                 .build();
