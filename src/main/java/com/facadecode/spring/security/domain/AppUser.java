@@ -6,7 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Set;
 
-import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.ALL;
 
 @Entity(name = "app_user")
 @Data
