@@ -1,9 +1,10 @@
 package com.facadecode.spring.security.config;
 
+import com.facadecode.spring.security.domain.AppPermission;
 import com.facadecode.spring.security.domain.AppRole;
 import com.facadecode.spring.security.domain.AppUser;
 import com.facadecode.spring.security.domain.Course;
-import com.facadecode.spring.security.enums.RoleEnum;
+import com.facadecode.spring.security.repo.AppPermissionRepository;
 import com.facadecode.spring.security.repo.AppRoleRepository;
 import com.facadecode.spring.security.repo.AppUserRepository;
 import com.facadecode.spring.security.repo.CourseRepository;
@@ -18,9 +19,15 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.facadecode.spring.security.enums.PermissionEnum.*;
+import static com.facadecode.spring.security.enums.RoleEnum.*;
+
 @Slf4j
 @Component
 public class AppDataInitialiser implements ApplicationRunner {
+    @Autowired
+    private AppPermissionRepository appPermissionRepository;
+
     @Autowired
     private AppRoleRepository appRoleRepository;
 
@@ -37,7 +44,8 @@ public class AppDataInitialiser implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         this.clearAppData();
 
-        AppRole[] roles = this.createRoles();
+        AppPermission[] permissions = this.createPermissions();
+        AppRole[] roles = this.createRoles(permissions);
         AppUser[] instructors = this.createInstructors(roles[1]);
         Course[] courses = this.createCourses(instructors);
         AppUser[] students = this.createStudents(roles[0], courses);
@@ -47,17 +55,69 @@ public class AppDataInitialiser implements ApplicationRunner {
     private void clearAppData() {
         appUserRepository.deleteAll();
         appRoleRepository.deleteAll();
+        appPermissionRepository.deleteAll();
         courseRepository.deleteAll();
     }
 
-    private AppRole[] createRoles() {
-        AppRole studentRole = AppRole.builder().name(RoleEnum.STUDENT).build();
+    private AppPermission[] createPermissions() {
+        AppPermission createCoursePermission = AppPermission.builder().name(CREATE_COURSE).build();
+        appPermissionRepository.save(createCoursePermission);
+
+        AppPermission updateCoursePermission = AppPermission.builder().name(UPDATE_COURSE).build();
+        appPermissionRepository.save(updateCoursePermission);
+
+        AppPermission playCoursePermission = AppPermission.builder().name(PLAY_COURSE).build();
+        appPermissionRepository.save(playCoursePermission);
+
+        AppPermission listStudentsPermission = AppPermission.builder().name(LIST_STUDENTS).build();
+        appPermissionRepository.save(listStudentsPermission);
+
+        AppPermission listInstructorsPermission = AppPermission.builder().name(LIST_INSTRUCTORS).build();
+        appPermissionRepository.save(listInstructorsPermission);
+
+        AppPermission viewProfilePermission = AppPermission.builder().name(VIEW_PROFILE).build();
+        appPermissionRepository.save(viewProfilePermission);
+
+        return new AppPermission[] {
+                createCoursePermission,
+                updateCoursePermission,
+                playCoursePermission,
+                listStudentsPermission,
+                listInstructorsPermission,
+                viewProfilePermission
+        };
+    }
+
+    private AppRole[] createRoles(AppPermission[] permissions) {
+        AppPermission createCoursePermission = permissions[0];
+        AppPermission updateCoursePermission = permissions[1];
+        AppPermission playCoursePermission = permissions[2];
+        AppPermission listStudentsPermission = permissions[3];
+        AppPermission listInstructorsPermission = permissions[4];
+        AppPermission viewProfilePermission = permissions[5];
+
+        AppRole studentRole = AppRole.builder()
+                .name(STUDENT)
+                .permissions(
+                        Stream.of(playCoursePermission, viewProfilePermission).collect(Collectors.toSet())
+                )
+                .build();
         appRoleRepository.save(studentRole);
 
-        AppRole instructorRole = AppRole.builder().name(RoleEnum.INSTRUCTOR).build();
+        AppRole instructorRole = AppRole.builder()
+                .name(INSTRUCTOR)
+                .permissions(
+                        Stream.of(createCoursePermission, updateCoursePermission, playCoursePermission, viewProfilePermission).collect(Collectors.toSet())
+                )
+                .build();
         appRoleRepository.save(instructorRole);
 
-        AppRole adminRole = AppRole.builder().name(RoleEnum.ADMIN).build();
+        AppRole adminRole = AppRole.builder()
+                .name(ADMIN)
+                .permissions(
+                        Stream.of(listStudentsPermission, listInstructorsPermission, viewProfilePermission).collect(Collectors.toSet())
+                )
+                .build();
         appRoleRepository.save(adminRole);
 
         return new AppRole[] { studentRole, instructorRole, adminRole};

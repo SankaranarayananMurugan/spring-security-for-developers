@@ -1,7 +1,7 @@
 package com.facadecode.spring.security.domain;
 
-import com.facadecode.spring.security.enums.RoleEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.facadecode.spring.security.enums.RoleEnum;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,4 +24,12 @@ public class AppRole {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
     @JsonIgnore
     private Set<AppUser> users;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "app_role_to_permission",
+            joinColumns = @JoinColumn(name = "app_role_id"),
+            inverseJoinColumns = @JoinColumn(name = "app_permission_id")
+    )
+    private Set<AppPermission> permissions;
 }
