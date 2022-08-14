@@ -1,5 +1,6 @@
 package com.facadecode.spring.security.service;
 
+import com.facadecode.spring.security.domain.AppRole;
 import com.facadecode.spring.security.repo.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,8 +24,17 @@ public class DbUserDetailsService {
                         .username(appUser.getUsername())
                         .password(appUser.getPassword())
                         .authorities(Collections.EMPTY_SET)
+                        .roles(this.getRoles(appUser.getRoles()))
                         .build()
                 )
                 .collect(Collectors.toList());
     }
+
+    private String[] getRoles(Set<AppRole> roles) {
+        return roles.stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toSet())
+                .toArray(new String[0]);
+    }
+
 }
