@@ -1,31 +1,33 @@
 package com.facadecode.spring.security.service;
 
 import com.facadecode.spring.security.domain.AppRole;
+import com.facadecode.spring.security.domain.AppUser;
 import com.facadecode.spring.security.repo.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class DbUserDetailsService {
+public class DbUserDetailsService implements UserDetailsService {
     @Autowired
     private AppUserRepository appUserRepository;
 
-    public List<UserDetails> getAllUserDetails() {
-        return appUserRepository.findAll()
-                .stream()
-                .map(appUser -> User.builder()
-                        .username(appUser.getUsername())
-                        .password(appUser.getPassword())
-                        .authorities(this.getPermissions(appUser.getRoles()))
-                        .build()
-                )
-                .collect(Collectors.toList());
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        AppUser appUser = appUserRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found", username)));
+
+        return User.builder()
+                .username(appUser.getUsername())
+                .password(appUser.getPassword())
+                .authorities(this.getPermissions(appUser.getRoles()))
+                .build();
     }
 
     private String[] getPermissions(Set<AppRole> roles) {
@@ -35,5 +37,4 @@ public class DbUserDetailsService {
                 .collect(Collectors.toSet())
                 .toArray(new String[0]);
     }
-
 }
