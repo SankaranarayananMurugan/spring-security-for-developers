@@ -1,6 +1,6 @@
 package com.facadecode.spring.security.config;
 
-import com.facadecode.spring.security.security.CoursePermissionEvaluator;
+import com.facadecode.spring.security.security.PermissionEvaluatorStrategyContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -12,13 +12,13 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends GlobalMethodSecurityConfiguration {
     @Autowired
-    private CoursePermissionEvaluator coursePermissionEvaluator;
+    private PermissionEvaluatorStrategyContext permissionEvaluatorStrategyContext;
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler
                 = new DefaultMethodSecurityExpressionHandler();
-        defaultMethodSecurityExpressionHandler.setPermissionEvaluator(coursePermissionEvaluator);
+        defaultMethodSecurityExpressionHandler.setPermissionEvaluator(permissionEvaluatorStrategyContext);
         return defaultMethodSecurityExpressionHandler;
     }
 }

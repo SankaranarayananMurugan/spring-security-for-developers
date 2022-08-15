@@ -6,7 +6,6 @@ import com.facadecode.spring.security.enums.PermissionEnum;
 import com.facadecode.spring.security.repo.AppUserRepository;
 import com.facadecode.spring.security.repo.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @Component
-public class CoursePermissionEvaluator implements PermissionEvaluator {
+public class CoursePermissionEvaluator implements PermissionEvaluatorStrategy<Course> {
     @Autowired
     private CourseRepository courseRepository;
 
@@ -52,12 +51,12 @@ public class CoursePermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-    // Check if the course is created by the authenticated user
+    // Check if the requested course is created by the authenticated user.
     private boolean isCreatedBy(Authentication authentication, Course course) {
         return course.getCreatedBy().getUsername().equalsIgnoreCase(authentication.getName());
     }
 
-    // Check if the course is enrolled by the authenticated user
+    // Check if the requested course is enrolled by the authenticated user.
     private boolean isEnrolledStudent(Authentication authentication, Long courseId) {
         Optional<AppUser> student = appUserRepository.findByUsername(authentication.getName());
         if (student.isPresent()) {
@@ -67,5 +66,10 @@ public class CoursePermissionEvaluator implements PermissionEvaluator {
                     .anyMatch(course -> course.getId().equals(courseId));
         }
         return false;
+    }
+
+    @Override
+    public Class<Course> getTargetType() {
+        return Course.class;
     }
 }
