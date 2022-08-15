@@ -65,4 +65,12 @@ public class UserService {
         appUser.setTokenExpiryTime(tokenExpiryTime);
         appUserRepository.save(appUser);
     }
+
+    @PreAuthorize(Authority.DELETE_TOKEN)
+    public void deleteToken(String username) {
+        AppUser appUser = this.get(username);
+        appUser.setToken(null);
+        appUser.setTokenExpiryTime(null);
+        appUserRepository.save(appUser);
+    }
 }

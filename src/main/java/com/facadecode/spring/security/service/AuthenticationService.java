@@ -43,4 +43,8 @@ public class AuthenticationService {
         calendar.add(Calendar.MINUTE, 30);
         return calendar.getTime();
     }
+
+    public void invalidateToken() {
+        userService.deleteToken(authenticationFacade.getAuthentication().getName());
+    }
 }
