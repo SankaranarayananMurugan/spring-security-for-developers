@@ -56,12 +56,4 @@ public class UserService {
         return appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException(String.format("User with username %s not found", username)));
     }
-
-    @PreAuthorize(Authority.DELETE_TOKEN)
-    public void deleteToken(String username) {
-        AppUser appUser = this.get(username);
-        appUser.setToken(null);
-        appUser.setTokenExpiryTime(null);
-        appUserRepository.save(appUser);
-    }
 }

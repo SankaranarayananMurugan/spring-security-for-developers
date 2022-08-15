@@ -1,12 +1,15 @@
 package com.facadecode.spring.security.filters;
 
+import com.facadecode.spring.security.config.JWTConfig;
 import com.facadecode.spring.security.security.AuthenticationFacade;
-import com.facadecode.spring.security.service.DbUserDetailsService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,31 +18,46 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class TokenVerificationFilter extends OncePerRequestFilter {
     @Autowired
-    private DbUserDetailsService userDetailsService;
+    private AuthenticationFacade authenticationFacade;
 
     @Autowired
-    private AuthenticationFacade authenticationFacade;
+    private JWTConfig jwtConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.replace("Bearer ", "");
-            UserDetails userDetails = userDetailsService.loadUserByToken(token);
+            String accessToken = authorizationHeader.replace("Bearer ", "");
+            // Parse JWT using the SecretKey
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(jwtConfig.getSecretKey())
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
 
-            if (userDetails != null) {
+            // Check if JWT has expired
+            if (claims.getExpiration().after(new Date())) {
                 Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(
-                        userDetails.getUsername(), null, userDetails.getAuthorities()
+                        claims.getSubject(), null, this.getAuthorities(claims)
                 );
                 authenticationFacade.setAuthentication(authentication);
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private List<GrantedAuthority> getAuthorities(Claims claims) {
+        return ((List<String>) claims.get("authorities")).stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 }

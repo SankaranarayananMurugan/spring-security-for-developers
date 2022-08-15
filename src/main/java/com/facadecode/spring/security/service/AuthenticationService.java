@@ -54,8 +54,4 @@ public class AuthenticationService {
 
         return accessToken;
     }
-
-    public void invalidateToken() {
-        userService.deleteToken(authenticationFacade.getAuthentication().getName());
-    }
 }

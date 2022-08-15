@@ -23,10 +23,4 @@ public class AuthenticationController {
         Map<String, String> tokenResponse = Collections.singletonMap("accessToken", accessToken);
         return ResponseEntity.ok(tokenResponse);
     }
-
-    @DeleteMapping("token")
-    public ResponseEntity invalidateToken() {
-        authenticationService.invalidateToken();
-        return ResponseEntity.noContent().build();
-    }
 }

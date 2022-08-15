@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Set;
 
 import static javax.persistence.CascadeType.ALL;
@@ -46,8 +45,4 @@ public class AppUser {
     @OneToMany(mappedBy = "createdBy", cascade = ALL)
     @JsonIgnore
     private Set<Course> createdCourses;
-
-    private String token;
-
-    private Date tokenExpiryTime;
 }
