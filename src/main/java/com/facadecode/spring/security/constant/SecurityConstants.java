@@ -1,20 +1,21 @@
 package com.facadecode.spring.security.constant;
 
 public class SecurityConstants {
-    /* Course API URLs */
-    public static final String API_CREATE_COURSES = "/api/v1/courses";
-    public static final String API_UPDATE_COURSES = "/api/v1/courses/*";
     public static final String API_LIST_COURSES = "/api/v1/courses";
     public static final String API_GET_COURSE = "/api/v1/courses/*";
-    public static final String API_PLAY_COURSE = "/api/v1/courses/play/*";
-
-    /* User API URLs */
-    public static final String API_LIST_STUDENTS = "/api/v1/users/students";
-    public static final String API_LIST_INSTRUCTORS = "/api/v1/users/instructors";
-    public static final String API_VIEW_PROFILE = "/api/v1/users/*";
 
     public static final String[] PUBLIC_API_LIST = new String[] {
             API_LIST_COURSES,
             API_GET_COURSE
     };
+
+    public static class Authority {
+        public static final String LIST_STUDENTS = "hasAuthority(T(com.facadecode.spring.security.enums.PermissionEnum).LIST_STUDENTS.name())";
+        public static final String LIST_INSTRUCTORS = "hasAuthority(T(com.facadecode.spring.security.enums.PermissionEnum).LIST_INSTRUCTORS.name())";
+        public static final String VIEW_PROFILE = "hasAuthority(T(com.facadecode.spring.security.enums.PermissionEnum).VIEW_PROFILE.name())";
+        public static final String CREATE_COURSE = "hasAuthority(T(com.facadecode.spring.security.enums.PermissionEnum).CREATE_COURSE.name())";
+        public static final String UPDATE_COURSE = "hasAuthority(T(com.facadecode.spring.security.enums.PermissionEnum).UPDATE_COURSE.name())";
+        public static final String PLAY_COURSE = "hasAuthority(T(com.facadecode.spring.security.enums.PermissionEnum).PLAY_COURSE.name())";
+
+    }
 }

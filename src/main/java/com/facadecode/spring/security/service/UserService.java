@@ -1,16 +1,18 @@
 package com.facadecode.spring.security.service;
 
-import com.facadecode.spring.security.domain.AppUser;
 import com.facadecode.spring.security.domain.AppRole;
+import com.facadecode.spring.security.domain.AppUser;
 import com.facadecode.spring.security.enums.RoleEnum;
 import com.facadecode.spring.security.repo.AppRoleRepository;
 import com.facadecode.spring.security.repo.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.facadecode.spring.security.constant.SecurityConstants.Authority;
 import static com.facadecode.spring.security.enums.RoleEnum.INSTRUCTOR;
 import static com.facadecode.spring.security.enums.RoleEnum.STUDENT;
 
@@ -22,10 +24,12 @@ public class UserService {
     @Autowired
     private AppRoleRepository appRoleRepository;
 
+    @PreAuthorize(Authority.LIST_STUDENTS)
     public List<AppUser> listStudents() {
         return this.listByRoleName(STUDENT);
     }
 
+    @PreAuthorize(Authority.LIST_INSTRUCTORS)
     public List<AppUser> listInstructors() {
         return this.listByRoleName(INSTRUCTOR);
     }
@@ -40,11 +44,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @PreAuthorize(Authority.VIEW_PROFILE)
     public AppUser get(Long userId) {
         return appUserRepository.findById(userId)
                 .orElse(null);
     }
 
+    @PreAuthorize(Authority.VIEW_PROFILE)
     public AppUser get(String username) {
         return appUserRepository.findByUsername(username)
                 .orElse(null);

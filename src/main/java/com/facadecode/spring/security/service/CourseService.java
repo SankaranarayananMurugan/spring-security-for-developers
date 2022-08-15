@@ -6,9 +6,12 @@ import com.facadecode.spring.security.repo.CourseRepository;
 import com.facadecode.spring.security.security.AuthenticationFacade;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.facadecode.spring.security.constant.SecurityConstants.Authority;
 
 @Service
 public class CourseService {
@@ -21,6 +24,7 @@ public class CourseService {
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
+    @PreAuthorize(Authority.CREATE_COURSE)
     public Course create(Course newCourse) {
         String username = authenticationFacade.getAuthentication().getName();
         AppUser currentUser = userService.get(username);
@@ -28,6 +32,7 @@ public class CourseService {
         return courseRepo.save(newCourse);
     }
 
+    @PreAuthorize(Authority.UPDATE_COURSE)
     public Course update(Long courseId, Course course) {
         Course updatedCourse = null;
         Course existingCourse = courseRepo.findById(courseId).orElse(null);
@@ -47,6 +52,7 @@ public class CourseService {
                 .orElse(null);
     }
 
+    @PreAuthorize(Authority.PLAY_COURSE)
     public Course play(Long courseId) {
         return courseRepo.findById(courseId)
                 .orElse(null);
