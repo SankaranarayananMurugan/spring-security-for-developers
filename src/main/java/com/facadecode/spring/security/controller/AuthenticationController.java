@@ -19,8 +19,8 @@ public class AuthenticationController {
     @PostMapping(path = "token", consumes = {APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseEntity<Map<String,String>> generateToken(@RequestParam("username") String username,
                              @RequestParam("password") String password) {
-        String token = authenticationService.generateToken(username, password);
-        Map<String, String> tokenResponse = Collections.singletonMap("token", token);
+        String accessToken = authenticationService.generateToken(username, password);
+        Map<String, String> tokenResponse = Collections.singletonMap("accessToken", accessToken);
         return ResponseEntity.ok(tokenResponse);
     }
 

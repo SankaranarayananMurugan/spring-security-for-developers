@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,14 +55,6 @@ public class UserService {
     public AppUser get(String username) {
         return appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException(String.format("User with username %s not found", username)));
-    }
-
-    @PreAuthorize(Authority.UPDATE_TOKEN)
-    public void updateToken(String username, String token, Date tokenExpiryTime) {
-        AppUser appUser = this.get(username);
-        appUser.setToken(token);
-        appUser.setTokenExpiryTime(tokenExpiryTime);
-        appUserRepository.save(appUser);
     }
 
     @PreAuthorize(Authority.DELETE_TOKEN)
