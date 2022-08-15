@@ -6,6 +6,7 @@ import com.facadecode.spring.security.enums.RoleEnum;
 import com.facadecode.spring.security.repo.AppRoleRepository;
 import com.facadecode.spring.security.repo.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -45,12 +46,14 @@ public class UserService {
     }
 
     @PreAuthorize(Authority.VIEW_PROFILE)
+    @PostAuthorize("returnObject.username == authentication.name")
     public AppUser get(Long userId) {
         return appUserRepository.findById(userId)
                 .orElse(null);
     }
 
     @PreAuthorize(Authority.VIEW_PROFILE)
+    @PostAuthorize("returnObject.username == authentication.name")
     public AppUser get(String username) {
         return appUserRepository.findByUsername(username)
                 .orElse(null);
