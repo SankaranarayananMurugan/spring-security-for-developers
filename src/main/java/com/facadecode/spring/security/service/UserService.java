@@ -46,14 +46,14 @@ public class UserService {
     }
 
     @PreAuthorize(Authority.VIEW_PROFILE)
-    @PostAuthorize("returnObject.username == authentication.name")
+    @PostAuthorize("@serviceSecurity.isInstructor(returnObject) or returnObject.username == authentication.name")
     public AppUser get(Long userId) {
         return appUserRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException(String.format("User with id %s not found", userId)));
     }
 
     @PreAuthorize(Authority.VIEW_PROFILE)
-    @PostAuthorize("returnObject.username == authentication.name")
+    @PostAuthorize("@serviceSecurity.isInstructor(returnObject) or returnObject.username == authentication.name")
     public AppUser get(String username) {
         return appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException(String.format("User with username %s not found", username)));
