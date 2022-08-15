@@ -52,12 +52,12 @@ public class CoursePermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-    // UPDATE_COURSE permission - Check if the course is created by the authenticated user
+    // Check if the course is created by the authenticated user
     private boolean isCreatedBy(Authentication authentication, Course course) {
         return course.getCreatedBy().getUsername().equalsIgnoreCase(authentication.getName());
     }
 
-    // PLAY_COURSE permission - Check if the course is enrolled by the authenticated user
+    // Check if the course is enrolled by the authenticated user
     private boolean isEnrolledStudent(Authentication authentication, Long courseId) {
         Optional<AppUser> student = appUserRepository.findByUsername(authentication.getName());
         if (student.isPresent()) {

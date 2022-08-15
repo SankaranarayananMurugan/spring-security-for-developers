@@ -46,7 +46,7 @@ public class AppUserPermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-    // VIEW_PROFILE permission - Check if the requested appuser object have instructor role.
+    // Check if the requested appuser object have instructor role.
     public boolean isInstructor(AppUser appuser) {
         return appuser.getRoles()
                 .stream()
