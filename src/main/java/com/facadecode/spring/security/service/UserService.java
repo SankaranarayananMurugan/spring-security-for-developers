@@ -49,13 +49,13 @@ public class UserService {
     @PostAuthorize("returnObject.username == authentication.name")
     public AppUser get(Long userId) {
         return appUserRepository.findById(userId)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException(String.format("User with id %s not found", userId)));
     }
 
     @PreAuthorize(Authority.VIEW_PROFILE)
     @PostAuthorize("returnObject.username == authentication.name")
     public AppUser get(String username) {
         return appUserRepository.findByUsername(username)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException(String.format("User with username %s not found", username)));
     }
 }
