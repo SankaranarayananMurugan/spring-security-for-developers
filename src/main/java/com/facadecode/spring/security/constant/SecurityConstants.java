@@ -1,6 +1,7 @@
 package com.facadecode.spring.security.constant;
 
 public class SecurityConstants {
+    public static final String API_AUTH_TOKEN = "/auth/token";
     public static final String API_LIST_COURSES = "/api/v1/courses";
     public static final String API_GET_COURSE = "/api/v1/courses/*";
 

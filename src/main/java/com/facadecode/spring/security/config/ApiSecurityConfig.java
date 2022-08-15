@@ -6,8 +6,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.facadecode.spring.security.constant.SecurityConstants.API_AUTH_TOKEN;
 import static com.facadecode.spring.security.constant.SecurityConstants.PUBLIC_API_LIST;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 public class ApiSecurityConfig {
@@ -20,10 +22,10 @@ public class ApiSecurityConfig {
                                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeRequests(auth -> auth
+                        .antMatchers(POST, API_AUTH_TOKEN).permitAll()
                         .antMatchers(GET, PUBLIC_API_LIST).permitAll()
                         .anyRequest().authenticated()
-                )
-                .httpBasic();
+                );
         return http.build();
     }
 }
